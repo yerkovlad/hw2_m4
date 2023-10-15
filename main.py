@@ -69,8 +69,6 @@ def save_data(data):
         file.write('\n')
 
 def send_data_to_socket(data):
-    # Функція для відправки даних на сокет-сервер
-    # Встановіть з'єднання і відправте дані на сокет-сервер
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
             server_address = ('localhost', PORT_SOCKET)
