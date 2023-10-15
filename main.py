@@ -39,23 +39,27 @@ class MyHandler(BaseHTTPRequestHandler):
             data = json.loads(post_data.decode())
             template = templates_env.get_template('message.html')
             timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-
+    
             save_data({
                 timestamp: {
                     "username": data["username"],
                     "message": data["message"]
                 }
             })
+            
             response_data = {
                 "message": data,
                 "timestamp": timestamp
             }
             response = template.render(response_data)
-
+    
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
-            self.wfile.write(response.encode('utf-8'))
+            self.wfile.write(response.encode('utf-8')
+    
+            send_data_to_socket(response_data)
+
 
 def save_data(data):
     data_file = 'storage/data.json'
@@ -63,6 +67,17 @@ def save_data(data):
     with open(data_file, 'a') as file:
         json.dump(data, file, indent=4)
         file.write('\n')
+
+def send_data_to_socket(data):
+    # Функція для відправки даних на сокет-сервер
+    # Встановіть з'єднання і відправте дані на сокет-сервер
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            server_address = ('localhost', PORT_SOCKET)
+            message = json.dumps(data)
+            sock.sendto(message.encode('utf-8'), server_address)
+    except Exception as e:
+        print(f"Помилка відправки даних до сокет-серверу: {str(e)}")
 
 if __name__ == '__main__':
     http_server = HTTPServer(('localhost', PORT_HTTP), MyHandler)
