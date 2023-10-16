@@ -65,17 +65,11 @@ def save_data(data):
     os.makedirs(os.path.dirname(data_file), exist_ok=True)
 
     if not os.path.exists(data_file):
-        # Якщо файл не існує, створіть новий список даних
         data_list = []
     else:
-        # Якщо файл існує, завантажте вміст
         with open(data_file, 'r') as file:
             data_list = json.load(file)
-
-    # Додайте новий словник даних до списку
     data_list.append(data)
-
-    # Запишіть список у файл JSON, перезаписавши його
     with open(data_file, 'w') as file:
         json.dump(data_list, file, indent=4)
 
